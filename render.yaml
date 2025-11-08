@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: create-anything-web
+    env: node
+    buildCommand: cd apps/web && npm install && npm run build
+    startCommand: cd apps/web && npm run start
+    healthCheckPath: /api/test # Используем ваш тестовый API-маршрут
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # Добавьте сюда все ваши переменные окружения, например:
+      # - key: DATABASE_URL
+      #   value: ваша_строка_подключения_к_базе_данных_neon
+      # - key: AUTH_SECRET
+      #   value: ваш_секрет_аутентификации
+      # - key: BLOB_READ_WRITE_TOKEN
+      #   value: ваш_токен_vercel_blob
+      # - key: NEXT_PUBLIC_CREATE_BASE_URL
+      #   value: https://ваше_приложение.onrender.com
+      # - key: NEXT_PUBLIC_CREATE_HOST
+      #   value: ваше_приложение.onrender.com
+      # - key: NEXT_PUBLIC_PROJECT_GROUP_ID
+      #   value: ваш_id_группы_проекта
+      # - key: CORS_ORIGINS
+      #   value: https://ваше_приложение.onrender.com
