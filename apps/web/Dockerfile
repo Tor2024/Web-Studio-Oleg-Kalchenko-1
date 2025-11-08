@@ -10,6 +10,8 @@ COPY . .
 
 RUN npm run build
 
+RUN cp -r src build/server/
+
 EXPOSE 3000
 
 CMD ["npm", "run", "start"]
