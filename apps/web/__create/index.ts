@@ -6,6 +6,7 @@ import { contextStorage } from 'hono/context-storage';
 import { cors } from 'hono/cors';
 import { proxy } from 'hono/proxy';
 import { requestId } from 'hono/request-id';
+import { serveStatic } from 'hono/serve-static';
 import { createHonoServer } from 'react-router-hono-server/node';
 import { serializeError } from 'serialize-error';
 
@@ -65,6 +66,8 @@ if (process.env.CORS_ORIGINS) {
   );
 }
 
+app.use('/assets/*', serveStatic({ root: './build/client' }));
+
 
 app.all('/integrations/:path{.+}', async (c, next) => {
   const queryParams = c.req.query();
@@ -107,7 +110,11 @@ app.get('/api/test', async (c) => {
 
 app.route(API_BASENAME, api);
 
-export default createHonoServer({
-  app,
-  defaultLogger: false,
-});
+// export default createHonoServer({
+//   app,
+//   defaultLogger: false,
+// });
+
+export default (req, res) => {
+  res.status(200).json({ message: 'Hello from serverless function' });
+};
