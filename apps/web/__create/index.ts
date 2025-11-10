@@ -16,33 +16,9 @@ import { API_BASENAME, api } from './route-builder';
 
 
 
-const als = new AsyncLocalStorage<{ requestId: string }>();
-
-for (const method of ['log', 'info', 'warn', 'error', 'debug'] as const) {
-  const original = nodeConsole[method].bind(console);
-
-  console[method] = (...args: unknown[]) => {
-    const requestId = als.getStore()?.requestId;
-    if (requestId) {
-      original(`[traceId:${requestId}]`, ...args);
-    } else {
-      original(...args);
-    }
-  };
-}
-
-
-
 const app = new Hono();
 
 app.use('*', requestId());
-
-app.use('*', (c, next) => {
-  const requestId = c.get('requestId');
-  return als.run({ requestId }, () => next());
-});
-
-app.use(contextStorage());
 
 app.onError((err, c) => {
   if (c.req.method !== 'GET') {
