@@ -66,7 +66,7 @@ if (process.env.CORS_ORIGINS) {
   );
 }
 
-app.use('/assets/*', serveStatic({ root: './build/client' }));
+
 
 
 app.all('/integrations/:path{.+}', async (c, next) => {
