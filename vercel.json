@@ -1,5 +1,5 @@
 {
-  "buildCommand": "cd apps/web && npm run build && cp build/server/index.js ../../api/index.js",
+  "buildCommand": "cd apps/web && npm run build && mkdir -p ../../api && cp build/server/index.js ../../api/index.js",
   "outputDirectory": "apps/web/build/client",
   "installCommand": "cd apps/web && rm package-lock.json && npm install --legacy-peer-deps",
   "framework": null,
