@@ -1,12 +1,4 @@
 {
-  "buildCommand": "cd apps/web && npm run build",
-  "outputDirectory": "apps/web/build/client",
-  "installCommand": "cd apps/web && rm package-lock.json && npm install --legacy-peer-deps",
   "framework": "react-router",
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/apps/web/build/server/index.js"
-    }
-  ]
+  "rootDirectory": "apps/web"
 }
