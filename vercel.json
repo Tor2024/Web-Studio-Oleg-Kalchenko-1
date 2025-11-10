@@ -3,6 +3,11 @@
   "outputDirectory": "apps/web/build/client",
   "installCommand": "cd apps/web && rm package-lock.json && npm install --legacy-peer-deps",
   "framework": null,
+  "functions": {
+    "api/index.js": {
+      "runtime": "nodejs18"
+    }
+  },
   "rewrites": [
     {
       "source": "/(.*)",
