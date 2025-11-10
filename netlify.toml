@@ -1,0 +1,3 @@
+[build]
+  command = "cd apps/web && npm run build"
+  publish = "apps/web/build/client"
