@@ -85,8 +85,3 @@ app.get('/api/test', async (c) => {
 
 
 app.route(API_BASENAME, api);
-
-export default createHonoServer({
-  app,
-  defaultLogger: false,
-});
