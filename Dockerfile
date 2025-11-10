@@ -8,7 +8,7 @@ RUN npm install --legacy-peer-deps
 
 COPY apps/web/ ./
 
-RUN npm rebuild rollup
+RUN npm install @rollup/rollup-linux-x64-gnu
 
 RUN npm run build
 
