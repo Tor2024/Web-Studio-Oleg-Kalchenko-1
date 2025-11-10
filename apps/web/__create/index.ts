@@ -110,14 +110,6 @@ app.get('/api/test', async (c) => {
 
 app.route(API_BASENAME, api);
 
-export default async (req: any, res: any) => {
-  const server = await createHonoServer({
-    app,
-    defaultLogger: false,
-  });
-  return (server as any)(req, res);
+export default (_req: any, res: any) => {
+  res.status(200).json({ message: 'Hello from serverless function' });
 };
-
-// export default (_req: any, res: any) => {
-//   res.status(200).json({ message: 'Hello from serverless function' });
-// };
