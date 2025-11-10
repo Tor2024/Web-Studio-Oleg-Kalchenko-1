@@ -8,6 +8,8 @@ RUN npm install --legacy-peer-deps
 
 COPY apps/web/ ./
 
+RUN npm rebuild rollup
+
 RUN npm run build
 
 RUN cp -r src build/server/
