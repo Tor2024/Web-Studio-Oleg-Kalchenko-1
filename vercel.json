@@ -1,7 +1,7 @@
 {
   "buildCommand": "cd apps/web && npm run build",
   "outputDirectory": "apps/web/build/client",
-  "installCommand": "cd apps/web && npm install --legacy-peer-deps",
+  "installCommand": "cd apps/web && rm package-lock.json && npm install --legacy-peer-deps",
   "framework": null,
   "rewrites": [
     {
