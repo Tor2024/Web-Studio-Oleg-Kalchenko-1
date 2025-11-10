@@ -4,9 +4,7 @@
   "installCommand": "cd apps/web && rm package-lock.json && npm install --legacy-peer-deps",
   "framework": null,
   "functions": {
-    "api/index.js": {
-      "runtime": "nodejs18"
-    }
+    "api/index.js": {}
   },
   "rewrites": [
     {
