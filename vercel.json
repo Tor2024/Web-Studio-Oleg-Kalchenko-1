@@ -3,11 +3,6 @@
   "outputDirectory": "apps/web/build/client",
   "installCommand": "npm install",
   "framework": null,
-  "functions": {
-    "apps/web/build/server/index.js": {
-      "runtime": "nodejs20"
-    }
-  },
   "rewrites": [
     {
       "source": "/(.*)",
