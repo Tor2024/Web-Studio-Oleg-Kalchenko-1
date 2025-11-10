@@ -86,10 +86,7 @@ app.get('/api/test', async (c) => {
 
 app.route(API_BASENAME, api);
 
-export default async (req: any, res: any) => {
-  const server = await createHonoServer({
-    app,
-    defaultLogger: false,
-  });
-  return (server as any)(req, res);
-};
+export default createHonoServer({
+  app,
+  defaultLogger: false,
+});
