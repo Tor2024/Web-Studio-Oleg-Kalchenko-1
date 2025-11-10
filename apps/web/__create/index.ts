@@ -1,6 +1,5 @@
 import { AsyncLocalStorage } from 'node:async_hooks';
 import nodeConsole from 'node:console';
-import { VercelRequest, VercelResponse } from '@vercel/node';
 import { authHandler } from '@hono/auth-js';
 import { Hono } from 'hono';
 import { contextStorage } from 'hono/context-storage';
@@ -116,6 +115,6 @@ app.route(API_BASENAME, api);
 //   defaultLogger: false,
 // });
 
-export default (_req: VercelRequest, res: VercelResponse) => {
+export default (_req: any, res: any) => {
   res.status(200).json({ message: 'Hello from serverless function' });
 };
