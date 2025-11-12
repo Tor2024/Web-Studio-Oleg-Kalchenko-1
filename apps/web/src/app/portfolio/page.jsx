@@ -1,39 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Header from "../../components/Header";
 import { ExternalLink, ImageIcon, X, Calendar, Tag } from "lucide-react";
 import { useLanguage } from "../../context/LanguageContext";
+import { useContentData } from "../../utils/useContentData";
 
 export default function PortfolioPage() {
-  const [portfolioItems, setPortfolioItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-
   const [selectedProject, setSelectedProject] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { currentLanguage, t } = useLanguage();
-
-  useEffect(() => {
-    fetch('/api/portfolio')
-      .then(res => res.json())
-      .then(data => {
-        setPortfolioItems(data.data || []);
-        setLoading(false);
-      })
-      .catch(() => {
-        // Fallback to localStorage
-        const localData = localStorage.getItem('admin_portfolio');
-        if (localData) {
-          try {
-            const parsed = JSON.parse(localData);
-            setPortfolioItems(parsed);
-          } catch (e) {
-            setPortfolioItems([]);
-          }
-        } else {
-          setPortfolioItems([]);
-        }
-        setLoading(false);
-      });
-  }, []);
+  const { items: portfolioItems, loading } = useContentData('portfolio');
 
   const openProjectModal = (project) => {
     setSelectedProject(project);

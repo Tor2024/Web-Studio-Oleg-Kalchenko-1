@@ -228,21 +228,3 @@ export const translations = {
     },
   }
 };
-
-// Хук для получения переводов
-export const useTranslation = (language = "de") => {
-  const t = (key) => {
-    if (!key) return '';
-    const keys = key.split(".");
-    let value = translations[language] || translations['de'];
-
-    for (const k of keys) {
-      if (!value) return key;
-      value = value[k];
-    }
-
-    return value || key;
-  };
-  
-  return { t };
-};

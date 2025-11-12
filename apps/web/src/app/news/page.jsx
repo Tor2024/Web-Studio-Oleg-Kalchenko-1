@@ -1,37 +1,13 @@
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Header from "../../components/Header";
 import { Calendar, Clock } from "lucide-react";
 import { useLanguage } from "../../context/LanguageContext";
+import { useContentData } from "../../utils/useContentData";
 
 export default function NewsPage() {
-  const [newsItems, setNewsItems] = useState([]);
-  const [loading, setLoading] = useState(true);
   const { currentLanguage, t } = useLanguage();
-
-  useEffect(() => {
-    fetch('/api/news')
-      .then(res => res.json())
-      .then(data => {
-        setNewsItems(data.data || []);
-        setLoading(false);
-      })
-      .catch(() => {
-        // Fallback to localStorage
-        const localData = localStorage.getItem('admin_news');
-        if (localData) {
-          try {
-            const parsed = JSON.parse(localData);
-            setNewsItems(parsed);
-          } catch (e) {
-            setNewsItems([]);
-          }
-        } else {
-          setNewsItems([]);
-        }
-        setLoading(false);
-      });
-  }, []);
+  const { items: newsItems, loading } = useContentData('news');
 
   return (
     <div className="min-h-screen bg-[#FEFEFE]">

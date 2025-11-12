@@ -8,9 +8,14 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
-      # Добавьте сюда все ваши переменные окружения, например:
-      # - key: DATABASE_URL
-      #   value: ваша_строка_подключения_к_базе_данных_neon
+      # Для бесплатного тарифа Render используйте Vercel Blob Storage
+      # Получите токен на https://vercel.com/dashboard/stores
+      # - key: BLOB_READ_WRITE_TOKEN
+      #   value: ваш_токен_vercel_blob
+      # 
+      # ИЛИ используйте Persistent Disk (только на платном тарифе):
+      # Добавьте Persistent Disk в настройках сервиса Render
+      # Path: /opt/render/project/src/content_data
       # - key: AUTH_SECRET
       #   value: ваш_секрет_аутентификации
       # - key: BLOB_READ_WRITE_TOKEN

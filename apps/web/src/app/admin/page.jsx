@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import AdminList from "../../components/AdminList";
 import EditorForm from "../../components/EditorForm";
 import Header from "../../components/Header";
+import { useContentData } from "../../utils/useContentData";
 
 const TABS = [
   { key: "news", label: "Новости" },
@@ -10,36 +11,14 @@ const TABS = [
 
 export default function AdminPage() {
   const [activeTab, setActiveTab] = useState("news");
-  const [items, setItems] = useState([]);
   const [editing, setEditing] = useState(null);
   const [showEditor, setShowEditor] = useState(false);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    fetchAll();
-    // eslint-disable-next-line
-  }, [activeTab]);
+  const { items, loading, refetch } = useContentData(activeTab);
 
   async function fetchAll() {
-    setLoading(true);
-    let res;
-    try {
-      if (activeTab === "news") {
-        const response = await fetch('/api/news');
-        res = (await response.json()).data || [];
-      } else {
-        const response = await fetch('/api/portfolio');
-        res = (await response.json()).data || [];
-      }
-    } catch (error) {
-      // Fallback to localStorage if API fails
-      const localData = localStorage.getItem(`admin_${activeTab}`);
-      res = localData ? JSON.parse(localData) : [];
-    }
-    setItems(res);
+    await refetch();
     setShowEditor(false);
     setEditing(null);
-    setLoading(false);
   }
 
   function handleEdit(item) {
@@ -51,13 +30,16 @@ export default function AdminPage() {
     setShowEditor(true);
   }
   async function handleDelete(folder_name) {
-    let endpoint = activeTab === "news" ? "/api/news" : "/api/portfolio";
     try {
-      await fetch(endpoint, {
+      const response = await fetch(`/api/${activeTab}`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ folder_name })
       });
+      if (response.ok) {
+        fetchAll();
+        return;
+      }
     } catch (error) {
       console.log("API delete failed, using localStorage fallback");
       // Fallback to localStorage
@@ -66,15 +48,15 @@ export default function AdminPage() {
         let items = JSON.parse(localData);
         items = items.filter(item => item.folder_name !== folder_name);
         localStorage.setItem(`admin_${activeTab}`, JSON.stringify(items));
+        fetchAll();
       }
     }
-    fetchAll();
   }
+
   async function handleSave(obj) {
-    let endpoint = activeTab === "news" ? "/api/news" : "/api/portfolio";
     const method = editing ? "PUT" : "POST";
     try {
-      const response = await fetch(endpoint, {
+      const response = await fetch(`/api/${activeTab}`, {
         method: method,
         headers: {
           "Content-Type": "application/json",
