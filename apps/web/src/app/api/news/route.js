@@ -1,4 +1,5 @@
-import { getItems, addItem, updateItem, deleteItem } from '../../../utils/fileStorage.js';
+import { getItems, addItem, updateItem, deleteItem } from '../../../utils/storage.js';
+import { requireAuth } from '../../../utils/auth.js';
 
 export async function loader() {
   try {
@@ -15,22 +16,24 @@ export async function loader() {
 
 export async function action({ request }) {
   const method = request.method.toUpperCase();
+  const authError = await requireAuth(request);
+  if (authError) return authError;
   try {
     if (method === 'POST') {
       const item = await request.json();
       if (!item.folder_name) {
         return Response.json({ error: 'folder_name is required' }, { status: 400 });
       }
-      await addItem('news', item);
-      return Response.json({ success: true }, { status: 201 });
+      const saved = await addItem('news', item);
+      return Response.json({ success: true, item: saved }, { status: 201 });
     }
     if (method === 'PUT') {
       const item = await request.json();
       if (!item.folder_name) {
         return Response.json({ error: 'folder_name is required' }, { status: 400 });
       }
-      await updateItem('news', item.folder_name, item);
-      return Response.json({ success: true });
+      const saved = await updateItem('news', item.folder_name, item);
+      return Response.json({ success: true, item: saved });
     }
     if (method === 'DELETE') {
       const { folder_name } = await request.json();

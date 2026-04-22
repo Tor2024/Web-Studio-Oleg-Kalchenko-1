@@ -1,60 +1,28 @@
-import * as React from 'react';
+import { useCallback, useState } from 'react';
 
-function useUpload() {
-  const [loading, setLoading] = React.useState(false);
-  const upload = React.useCallback(async (input) => {
+// Uploads a File via the /api/upload resource route. On success returns { url }.
+// On failure returns { error }. Loading state is exposed as [upload, { loading }].
+export function useUpload() {
+  const [loading, setLoading] = useState(false);
+  const upload = useCallback(async (input) => {
     try {
       setLoading(true);
-      let response;
-      if ("file" in input && input.file) {
-        const formData = new FormData();
-        formData.append("file", input.file);
-        response = await fetch("/api/uploads/", {
-          method: "POST",
-          body: formData
-        });
-      } else if ("url" in input) {
-        response = await fetch("/_create/api/upload/", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ url: input.url })
-        });
-      } else if ("base64" in input) {
-        response = await fetch("/_create/api/upload/", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ base64: input.base64 })
-        });
-      } else {
-        response = await fetch("/_create/api/upload/", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/octet-stream"
-          },
-          body: input.buffer
-        });
-      }
+      if (!input || !input.file) return { error: 'No file provided' };
+      const formData = new FormData();
+      formData.append('file', input.file);
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
       if (!response.ok) {
-        if (response.status === 413) {
-          throw new Error("Upload failed: File too large.");
-        }
-        throw new Error("Upload failed");
+        if (response.status === 401) return { error: 'Требуется вход в админку' };
+        if (response.status === 413) return { error: 'Файл слишком большой' };
+        return { error: 'Не удалось загрузить файл' };
       }
       const data = await response.json();
-      return { url: data.url, mimeType: data.mimeType || null };
-    } catch (uploadError) {
-      console.error("Upload error:", uploadError);
-      if (uploadError instanceof Error) {
-        return { error: uploadError.message };
-      }
-      if (typeof uploadError === "string") {
-        return { error: uploadError };
-      }
-      return { error: "Upload failed" };
+      return { url: data.url };
+    } catch (err) {
+      return { error: err?.message || 'Не удалось загрузить файл' };
     } finally {
       setLoading(false);
     }
@@ -63,5 +31,4 @@ function useUpload() {
   return [upload, { loading }];
 }
 
-export { useUpload };
 export default useUpload;
