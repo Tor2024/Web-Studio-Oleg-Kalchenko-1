@@ -88,7 +88,7 @@ function generateRoutes(node: Tree): RouteConfigEntry[] {
 }
 
 const tree = buildRouteTree(__dirname);
-const notFound = route('*?', './not-found.jsx');
+const notFound = route('*', './not-found.jsx');
 const routes: RouteConfigEntry[] = [...generateRoutes(tree), notFound];
 
 export default routes;
