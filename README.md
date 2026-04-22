@@ -23,8 +23,16 @@ npm run dev
 
 ## Переменные окружения
 
-См. `apps/web/.env.example`. На данном этапе переменных не требуется — они
-добавятся на последующих шагах (GitHub storage, admin password).
+См. [`apps/web/.env.example`](apps/web/.env.example).
+
+| Переменная          | Обязательна | Назначение                                                                 |
+| ------------------- | ----------- | -------------------------------------------------------------------------- |
+| `ADMIN_PASSWORD`    | да          | Пароль на вход в `/admin`                                                  |
+| `AUTH_SECRET`       | да          | HMAC-ключ для admin-сессии. `openssl rand -hex 32`                         |
+| `GITHUB_TOKEN`      | на проде    | Fine-grained PAT, Contents: Read and write. Без него админка пишет в файлы |
+| `GITHUB_REPO_OWNER` | нет         | Дефолт `Tor2024`                                                           |
+| `GITHUB_REPO_NAME`  | нет         | Дефолт `Web-Studio-Oleg-Kalchenko-1`                                       |
+| `GITHUB_REPO_BRANCH`| нет         | Дефолт `master`                                                            |
 
 ## Скрипты
 
@@ -50,9 +58,30 @@ apps/web/
   public/            — статические ассеты
 ```
 
-## Деплой
+## Деплой на Vercel
 
-Деплой на Vercel — настраивается в отдельном PR.
+Этот монорепо-проект деплоится через официальный [`@vercel/react-router`](https://vercel.com/docs/frameworks/frontend/react-router) пресет (React Router v7 SSR на Vercel Fluid compute).
+
+**Настройки проекта в Vercel (`Settings → General`):**
+
+- **Framework Preset**: `React Router` (или `Other` — пресет подцепится автоматически из `react-router.config.ts` по наличию `process.env.VERCEL`).
+- **Root Directory**: `apps/web`
+- **Build Command**: по умолчанию (`react-router build`).
+- **Output Directory**: по умолчанию.
+- **Install Command**: по умолчанию (`npm install`).
+- **Node.js Version**: 20.x.
+
+**Environment variables (`Settings → Environment Variables`, все на Preview + Production):**
+
+```
+ADMIN_PASSWORD=<пароль>
+AUTH_SECRET=<openssl rand -hex 32>
+GITHUB_TOKEN=<fine-grained PAT>
+```
+
+Автоматический деплой при push в `master` → Production; любой другой бранч / PR → Preview.
+
+Правка контента в `/admin` коммитит JSON в репо (через `GITHUB_TOKEN`) и автоматически триггерит новый деплой. Публикация изменений занимает ~30–60 секунд.
 
 ## Контакты
 
