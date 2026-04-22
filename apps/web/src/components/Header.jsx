@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { motion } from "framer-motion";
 import { Menu, X, Globe } from "lucide-react";
 import { useLanguage } from "../context/LanguageContext";
 import { languages } from "../utils/i18n";
+import TypewriterText from "./TypewriterText";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -19,7 +21,7 @@ export default function Header() {
   ];
 
   return (
-    <header className="relative py-6 px-6 md:px-12">
+    <header className="sticky top-0 z-50 py-6 px-6 md:px-12 bg-[#FEFEFE]/80 backdrop-blur-md transition-all duration-300">
       {/* Цветная рисованная граница заголовка */}
       <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
         <svg
@@ -54,8 +56,8 @@ export default function Header() {
         {/* Логотип */}
         <div className="flex items-center">
           <a href="/" className="relative group watercolor-hover">
-            <div className="font-caveat text-2xl md:text-3xl font-bold text-[#2A2A2A] relative z-10">
-              Oleh Kalchenko
+            <div className="font-caveat text-2xl md:text-3xl font-bold text-[#2A2A2A] relative z-10 min-w-[280px]">
+              <TypewriterText text="Web Studio Oleh Kalchenko" delay={5000} />
             </div>
             {/* Цветная рисованная подчеркивание */}
             <svg
@@ -136,11 +138,10 @@ export default function Header() {
                           changeLanguage(code);
                           setIsLangMenuOpen(false);
                         }}
-                        className={`w-full text-left px-4 py-2 font-kalam text-sm hover:bg-gradient-to-r hover:from-[#F0E8D6] hover:to-[#E8F4F8] transition-colors duration-300 ${
-                          currentLanguage === code
-                            ? "text-[#A8D5BA] font-semibold"
-                            : "text-[#2A2A2A]"
-                        }`}
+                        className={`w-full text-left px-4 py-2 font-kalam text-sm hover:bg-gradient-to-r hover:from-[#F0E8D6] hover:to-[#E8F4F8] transition-colors duration-300 ${currentLanguage === code
+                          ? "text-[#A8D5BA] font-semibold"
+                          : "text-[#2A2A2A]"
+                          }`}
                       >
                         {name}
                       </button>
@@ -154,29 +155,31 @@ export default function Header() {
           {/* Десктопная навигация */}
           <nav className="hidden md:flex items-center space-x-8">
             {navItems.map((item, index) => (
-              <a
+              <motion.a
                 key={index}
                 href={item.href}
-                className="relative group watercolor-hover font-kalam text-lg text-[#2A2A2A] hover:text-[#1A1A1A] transition-colors duration-300"
+                className="relative px-2 py-1"
+                initial="initial"
+                whileHover="hover"
               >
-                <span className="relative z-10">{item.label}</span>
-                {/* Цветная рисованная окружность при наведении */}
-                <svg
-                  className="absolute -inset-2 w-auto h-8 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                  viewBox="0 0 80 32"
-                >
-                  <ellipse
-                    cx="40"
-                    cy="16"
-                    rx="38"
-                    ry="14"
-                    stroke="#D4C5F9"
-                    strokeWidth="2"
-                    fill="rgba(212, 197, 249, 0.2)"
-                    className="hand-drawn-animation"
-                  />
-                </svg>
-              </a>
+                {/* Hand-drawn filled oval background */}
+                <motion.div
+                  className="absolute inset-0 bg-[#D4C5F9] rounded-md"
+                  style={{
+                    borderRadius: "255px 15px 225px 15px / 15px 225px 15px 255px",
+                    zIndex: 0,
+                  }}
+                  variants={{
+                    initial: { scale: 0.8, opacity: 0 },
+                    hover: { scale: 1.1, opacity: 1, rotate: -2 }
+                  }}
+                  transition={{ duration: 0.2 }}
+                />
+
+                <span className="relative z-10 font-kalam text-lg text-[#2A2A2A] transition-colors duration-300">
+                  {item.label}
+                </span>
+              </motion.a>
             ))}
           </nav>
 

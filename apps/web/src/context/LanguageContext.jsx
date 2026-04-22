@@ -37,11 +37,21 @@ export const LanguageProvider = ({ children }) => {
     setT(() => tFactory(currentLanguage));
   }, [currentLanguage]);
 
-  // Load saved language from localStorage
+  // Load saved language from localStorage or detect from browser
   useEffect(() => {
     const savedLanguage = localStorage.getItem("preferred-language");
     if (savedLanguage && ["de", "ru", "en"].includes(savedLanguage)) {
       setCurrentLanguage(savedLanguage);
+    } else {
+      // Auto-detect language
+      const browserLang = navigator.language || navigator.userLanguage;
+      if (browserLang.startsWith("ru")) {
+        setCurrentLanguage("ru");
+      } else if (browserLang.startsWith("de")) {
+        setCurrentLanguage("de");
+      } else {
+        setCurrentLanguage("en"); // Default to English for international users
+      }
     }
   }, []);
 

@@ -1,0 +1,15 @@
+{
+  "folder_name": "sample-news",
+  "title": {
+    "en": "New Website Launch",
+    "ru": "Запуск нового сайта"
+  },
+  "description": {
+    "en": "We are excited to announce the launch of our new website. It features a unique hand-drawn design and smooth animations.",
+    "ru": "Мы рады объявить о запуске нашего нового сайта. Он отличается уникальным рисованным дизайном и плавными анимациями."
+  },
+  "image": "/1.webp",
+  "date": "2025-11-19",
+  "author": "Oleh",
+  "slug": "new-website-launch"
+}

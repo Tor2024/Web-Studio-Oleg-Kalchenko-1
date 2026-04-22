@@ -1,6 +1,8 @@
-import { readdirSync, statSync } from 'node:fs';
-import { join } from 'node:path';
-import { fileURLToPath } from 'node:url';
+/// <reference types="node" />
+/// <reference types="vite/client" />
+import { readdirSync, statSync } from 'fs';
+import { join } from 'path';
+import { fileURLToPath } from 'url';
 import {
 	type RouteConfigEntry,
 	index,
@@ -16,6 +18,7 @@ type Tree = {
 	isParam: boolean;
 	paramName: string;
 	isCatchAll: boolean;
+	hasRoute?: boolean;
 };
 
 function buildRouteTree(dir: string, basePath = ''): Tree {
@@ -52,9 +55,11 @@ function buildRouteTree(dir: string, basePath = ''): Tree {
 			const childPath = basePath ? `${basePath}/${file}` : file;
 			const childNode = buildRouteTree(filePath, childPath);
 			node.children.push(childNode);
-		} else if (file === 'page.jsx') {
+		} else if (file === 'page.jsx' || file === 'page.tsx') {
 			node.hasPage = true;
-    }
+		} else if (file === 'route.js' || file === 'route.ts') {
+			node.hasRoute = true;
+		}
 	}
 
 	return node;
@@ -96,6 +101,35 @@ function generateRoutes(node: Tree): RouteConfigEntry[] {
 			routePath = processedSegments.join('/');
 			routes.push(route(routePath, componentPath));
 		}
+	} else if (node.hasRoute) {
+		const componentPath =
+			node.path === '' ? `./${node.path}route.js` : `./${node.path}/route.js`;
+
+		// Handle parameter routes for API
+		let routePath = node.path;
+
+		// Replace all parameter segments in the path
+		const segments = routePath.split('/');
+		const processedSegments = segments.map((segment) => {
+			if (segment.startsWith('[') && segment.endsWith(']')) {
+				const paramName = segment.slice(1, -1);
+
+				// Handle catch-all parameters (e.g., [...ids] becomes *)
+				if (paramName.startsWith('...')) {
+					return '*'; // React Router's catch-all syntax
+				}
+				// Handle optional parameters (e.g., [[id]] becomes :id?)
+				if (paramName.startsWith('[') && paramName.endsWith(']')) {
+					return `:${paramName.slice(1, -1)}?`;
+				}
+				// Handle regular parameters (e.g., [id] becomes :id)
+				return `:${paramName}`;
+			}
+			return segment;
+		});
+
+		routePath = processedSegments.join('/');
+		routes.push(route(routePath, componentPath));
 	}
 
 	for (const child of node.children) {

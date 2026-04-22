@@ -11,6 +11,7 @@ export default function EditorForm({ initialData, onSave, type }) {
   const [title, setTitle] = useState(initialData.title || { en: "", ru: "", de: "" });
   const [content, setContent] = useState(initialData.content || { en: "", ru: "", de: "" });
   const [date, setDate] = useState(initialData.date || new Date().toISOString().substring(0, 10));
+  const [category, setCategory] = useState(initialData.category || "webDesign");
   const [lang, setLang] = useState("en");
   const [uploading, setUploading] = useState(false);
   const [uploadResult, setUploadResult] = useState("");
@@ -57,19 +58,27 @@ export default function EditorForm({ initialData, onSave, type }) {
     // Автоматическая генерация id для новой публикации
     let newFolderName = folderName;
     if (!folderName) {
-      const ts = new Date().toISOString().replace(/[-:TZ.]/g,"").slice(0,14);
+      const ts = new Date().toISOString().replace(/[-:TZ.]/g, "").slice(0, 14);
       newFolderName = `${type}_${ts}`;
     }
     const obj = {
       folder_name: newFolderName,
+      slug: newFolderName,
       cover: coverUrl,
       title,
       content,
-      date
+      date,
+      ...(type === 'portfolio' && { category })
     };
     await onSave(obj);
     setUploading(false);
   }
+
+  const categories = [
+    { value: "webDesign", label: "Web Design" },
+    { value: "development", label: "Development" },
+    { value: "branding", label: "Branding" }
+  ];
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 max-w-xl mx-auto p-6 bg-white rounded-xl shadow">
@@ -77,6 +86,21 @@ export default function EditorForm({ initialData, onSave, type }) {
         <label className="font-semibold block mb-1">Дата</label>
         <input type="date" className="w-full border p-2 rounded" value={date} onChange={e => setDate(e.target.value)} />
       </div>
+
+      {type === 'portfolio' && (
+        <div>
+          <label className="font-semibold block mb-1">Категория</label>
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="w-full border p-2 rounded"
+          >
+            {categories.map(cat => (
+              <option key={cat.value} value={cat.value}>{cat.label}</option>
+            ))}
+          </select>
+        </div>
+      )}
       <div>
         <label className="font-semibold block mb-1">Обложка</label>
         <input type="file" accept="image/*" onChange={handleCoverChange} />
@@ -94,7 +118,7 @@ export default function EditorForm({ initialData, onSave, type }) {
         <WysiwygEditor
           value={content[lang]}
           onChange={val => {
-            if (((val.match(/<img /g)||[]).length) <= 5) {
+            if (((val.match(/<img /g) || []).length) <= 5) {
               handleWysiwygChange(val);
             }
           }}

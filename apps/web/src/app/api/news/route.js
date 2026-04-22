@@ -4,7 +4,9 @@ import { getItems, addItem, updateItem, deleteItem } from '../../../utils/fileSt
 
 export async function GET() {
   try {
+    console.log('API: Fetching news items...');
     const news = await getItems('news');
+    console.log('API: Fetched news items:', news);
     return new Response(
       JSON.stringify({
         data: news.sort((a, b) => new Date(b.date || 0).getTime() - new Date(a.date || 0).getTime())
