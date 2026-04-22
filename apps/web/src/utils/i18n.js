@@ -39,6 +39,13 @@ export const translations = {
         subtitle: "Lassen Sie uns Ihre Vision Wirklichkeit werden lassen.",
         button: "Projekt starten"
       },
+      designer: {
+        title: "Wer diese Seite zeichnet",
+        name: "Oleh Kalchenko",
+        role: "Designer & Entwickler",
+        bio: "Ich gestalte Websites wie Skizzenbücher: jedes Detail ist von Hand gezeichnet — von der ungeraden Linie bis zum Schatten unter dem Button. Keine Fabrikvorlagen, nur das, was Ihre Idee lauter erklingen lässt.",
+        quote: "Design ist nicht, wie eine Seite aussieht, sondern wie sie spricht."
+      },
       testimonials: {
         title: "Kundenstimmen",
         subtitle: "Was meine Kunden über die Zusammenarbeit sagen.",
@@ -231,6 +238,13 @@ export const translations = {
         subtitle: "Давайте воплотим ваше видение в реальность.",
         button: "Начать проект"
       },
+      designer: {
+        title: "Кто рисует этот сайт",
+        name: "Oleh Kalchenko",
+        role: "Дизайнер и разработчик",
+        bio: "Делаю сайты как скетчбуки: каждая деталь нарисована вручную, от кривой линии до тени под кнопкой. Никаких фабричных шаблонов — только то, что помогает вашей идее звучать громче.",
+        quote: "Дизайн — это не то, как сайт выглядит, а то, как он разговаривает."
+      },
       testimonials: {
         title: "Отзывы клиентов",
         subtitle: "Что говорят те, с кем я работал.",
@@ -420,6 +434,13 @@ export const translations = {
         title: "Have a project in mind?",
         subtitle: "Let's turn your vision into reality.",
         button: "Start a Project"
+      },
+      designer: {
+        title: "Who draws this site",
+        name: "Oleh Kalchenko",
+        role: "Designer & Developer",
+        bio: "I build sites like sketchbooks: every detail is drawn by hand, from the crooked line to the shadow under a button. No factory templates — only what makes your idea sound louder.",
+        quote: "Design isn't how a site looks — it's how it speaks."
       },
       testimonials: {
         title: "Testimonials",
