@@ -13,24 +13,13 @@ export default function PortfolioPage() {
 
   useEffect(() => {
     fetch('/api/portfolio')
-      .then(res => res.json())
-      .then(data => {
+      .then((res) => (res.ok ? res.json() : { data: [] }))
+      .then((data) => {
         setPortfolioItems(data.data || []);
         setLoading(false);
       })
       .catch(() => {
-        // Fallback to localStorage
-        const localData = localStorage.getItem('admin_portfolio');
-        if (localData) {
-          try {
-            const parsed = JSON.parse(localData);
-            setPortfolioItems(parsed);
-          } catch (e) {
-            setPortfolioItems([]);
-          }
-        } else {
-          setPortfolioItems([]);
-        }
+        setPortfolioItems([]);
         setLoading(false);
       });
   }, []);

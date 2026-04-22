@@ -11,24 +11,13 @@ export default function NewsPage() {
 
   useEffect(() => {
     fetch('/api/news')
-      .then(res => res.json())
-      .then(data => {
+      .then((res) => (res.ok ? res.json() : { data: [] }))
+      .then((data) => {
         setNewsItems(data.data || []);
         setLoading(false);
       })
       .catch(() => {
-        // Fallback to localStorage
-        const localData = localStorage.getItem('admin_news');
-        if (localData) {
-          try {
-            const parsed = JSON.parse(localData);
-            setNewsItems(parsed);
-          } catch (e) {
-            setNewsItems([]);
-          }
-        } else {
-          setNewsItems([]);
-        }
+        setNewsItems([]);
         setLoading(false);
       });
   }, []);
