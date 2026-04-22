@@ -1,24 +1,26 @@
-import { promises as fs } from 'node:fs';
-import { join } from 'node:path';
-
-const UPLOAD_DIR = join(process.cwd(), 'public', 'uploads');
+import { uploadAsset } from '../../../utils/storage.js';
+import { requireAuth } from '../../../utils/auth.js';
 
 export async function action({ request }) {
   if (request.method !== 'POST') {
     return Response.json({ error: 'Method not allowed' }, { status: 405 });
   }
+  const authError = await requireAuth(request);
+  if (authError) return authError;
   try {
     const form = await request.formData();
     const file = form.get('file');
     if (!file || typeof file === 'string') {
       return Response.json({ error: 'No file' }, { status: 400 });
     }
-    const ext = file.name.split('.').pop();
+    const ext = (file.name?.split('.').pop() || 'bin').toLowerCase();
     const fileName = `img_${Date.now()}_${Math.floor(Math.random() * 10000)}.${ext}`;
     const arrayBuffer = await file.arrayBuffer();
-    await fs.mkdir(UPLOAD_DIR, { recursive: true });
-    await fs.writeFile(join(UPLOAD_DIR, fileName), new Uint8Array(arrayBuffer));
-    return Response.json({ url: `/uploads/${fileName}` }, { status: 201 });
+    const result = await uploadAsset({
+      fileName,
+      buffer: new Uint8Array(arrayBuffer),
+    });
+    return Response.json(result, { status: 201 });
   } catch (error) {
     console.error('Upload error:', error);
     return Response.json({ error: 'Upload failed' }, { status: 500 });
