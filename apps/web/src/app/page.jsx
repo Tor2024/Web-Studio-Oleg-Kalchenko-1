@@ -14,6 +14,8 @@ import HandDrawnSlideshow from "../components/HandDrawnSlideshow";
 import HandDrawnFrame from "../components/HandDrawnFrame";
 import CookieConsent from "../components/CookieConsent";
 import HighlightedSlogan from "../components/HighlightedSlogan";
+import DesignerCard from "../components/DesignerCard";
+import PencilUnderline from "../components/PencilUnderline";
 
 export const meta = () => {
   return [
@@ -29,6 +31,13 @@ export default function HomePage() {
   const { t, currentLanguage } = useLanguage();
   const { items: newsItems, loading: newsLoading } = useContentData('news');
   const { items: portfolioItems, loading: portfolioLoading } = useContentData('portfolio');
+
+  // t() returns the key itself when a translation is missing — fall back to an
+  // explicit default in that case rather than displaying the raw key.
+  const tOr = (key, fallback) => {
+    const value = t(key);
+    return value && value !== key ? value : fallback;
+  };
 
   // Get top 3 portfolio items
   const featuredProjects = (portfolioItems || []).slice(0, 3);
@@ -207,9 +216,12 @@ export default function HomePage() {
       <section className="py-20 px-6 md:px-12 bg-white relative z-10">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="font-caveat text-4xl md:text-5xl font-bold text-[#2A2A2A] mb-4">
+            <h2 className="font-caveat text-4xl md:text-5xl font-bold text-[#2A2A2A] mb-2">
               {t("home.services.title")}
             </h2>
+            <div className="flex justify-center mb-4">
+              <PencilUnderline color="#D4C5F9" />
+            </div>
             <p className="font-kalam text-lg text-[#5A5A5A]">
               {t("home.services.subtitle")}
             </p>
@@ -233,13 +245,42 @@ export default function HomePage() {
       </section>
 
 
+      {/* Designer Section */}
+      <section className="py-20 px-6 md:px-12 relative z-10">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-10">
+            <h2 className="font-caveat text-4xl md:text-5xl font-bold text-[#2A2A2A] mb-2">
+              {tOr("home.designer.title", "Кто рисует этот сайт")}
+            </h2>
+            <div className="flex justify-center">
+              <PencilUnderline color="#FF6B6B" />
+            </div>
+          </div>
+          <DesignerCard
+            name={tOr("home.designer.name", "Oleh Kalchenko")}
+            role={tOr("home.designer.role", "Designer & Developer")}
+            bio={tOr(
+              "home.designer.bio",
+              "Делаю сайты как скетчбуки: каждая деталь нарисована вручную, от кривой линии до тени под кнопкой. Никаких фабричных шаблонов — только то, что помогает вашей идее звучать громче.",
+            )}
+            quote={tOr(
+              "home.designer.quote",
+              "Дизайн — это не то, как сайт выглядит, а то, как он разговаривает.",
+            )}
+          />
+        </div>
+      </section>
+
       {/* Featured Projects Section */}
       <section className="py-20 px-6 md:px-12 bg-[#F9F9F9] relative">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="font-caveat text-4xl md:text-5xl font-bold text-[#2A2A2A] mb-4">
+            <h2 className="font-caveat text-4xl md:text-5xl font-bold text-[#2A2A2A] mb-2">
               {t("home.featured.title")}
             </h2>
+            <div className="flex justify-center mb-4">
+              <PencilUnderline color="#A8D5BA" />
+            </div>
             <p className="font-kalam text-lg text-[#5A5A5A]">
               {t("home.featured.subtitle")}
             </p>
