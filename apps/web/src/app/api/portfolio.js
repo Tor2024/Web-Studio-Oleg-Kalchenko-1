@@ -4,6 +4,7 @@ import {
   updatePortfolioItem,
   deletePortfolioItem,
 } from '../../utils/storage.js';
+import { isAuthenticated } from '../../utils/auth.js';
 
 export async function loader() {
   try {
@@ -19,6 +20,10 @@ export async function loader() {
 }
 
 export async function action({ request }) {
+  if (!isAuthenticated(request)) {
+    return Response.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   const method = request.method.toUpperCase();
 
   let body;

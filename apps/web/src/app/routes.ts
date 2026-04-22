@@ -81,6 +81,8 @@ const pageRoutes = generateRoutes(buildRouteTree(__dirname));
 const apiRoutes: RouteConfigEntry[] = [
   route('api/news', './api/news.js'),
   route('api/portfolio', './api/portfolio.js'),
+  route('api/auth/login', './api/auth/login.js'),
+  route('api/auth/logout', './api/auth/logout.js'),
 ];
 
 export default [...pageRoutes, ...apiRoutes] satisfies RouteConfigEntry[];
