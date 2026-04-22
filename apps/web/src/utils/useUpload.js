@@ -2,59 +2,32 @@ import * as React from 'react';
 
 function useUpload() {
   const [loading, setLoading] = React.useState(false);
+
   const upload = React.useCallback(async (input) => {
     try {
       setLoading(true);
-      let response;
-      if ("file" in input && input.file) {
-        const formData = new FormData();
-        formData.append("file", input.file);
-        response = await fetch("/api/uploads/", {
-          method: "POST",
-          body: formData
-        });
-      } else if ("url" in input) {
-        response = await fetch("/_create/api/upload/", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ url: input.url })
-        });
-      } else if ("base64" in input) {
-        response = await fetch("/_create/api/upload/", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ base64: input.base64 })
-        });
-      } else {
-        response = await fetch("/_create/api/upload/", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/octet-stream"
-          },
-          body: input.buffer
-        });
+      if (!input || !('file' in input) || !input.file) {
+        return { error: 'Поддерживается только загрузка файла' };
       }
+      const formData = new FormData();
+      formData.append('file', input.file);
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
       if (!response.ok) {
         if (response.status === 413) {
-          throw new Error("Upload failed: File too large.");
+          return { error: 'Файл слишком большой' };
         }
-        throw new Error("Upload failed");
+        return { error: 'Не удалось загрузить файл' };
       }
       const data = await response.json();
       return { url: data.url, mimeType: data.mimeType || null };
-    } catch (uploadError) {
-      console.error("Upload error:", uploadError);
-      if (uploadError instanceof Error) {
-        return { error: uploadError.message };
-      }
-      if (typeof uploadError === "string") {
-        return { error: uploadError };
-      }
-      return { error: "Upload failed" };
+    } catch (err) {
+      console.error('Upload error:', err);
+      return {
+        error: err instanceof Error ? err.message : 'Не удалось загрузить файл',
+      };
     } finally {
       setLoading(false);
     }
