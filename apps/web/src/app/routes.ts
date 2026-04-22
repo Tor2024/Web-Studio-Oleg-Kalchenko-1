@@ -13,9 +13,6 @@ type Tree = {
   path: string;
   children: Tree[];
   hasPage: boolean;
-  isParam: boolean;
-  paramName: string;
-  isCatchAll: boolean;
 };
 
 function buildRouteTree(dir: string, basePath = ''): Tree {
@@ -24,28 +21,15 @@ function buildRouteTree(dir: string, basePath = ''): Tree {
     path: basePath,
     children: [],
     hasPage: false,
-    isParam: false,
-    isCatchAll: false,
-    paramName: '',
   };
-
-  const dirName = basePath.split('/').pop();
-  if (dirName?.startsWith('[') && dirName.endsWith(']')) {
-    node.isParam = true;
-    const paramName = dirName.slice(1, -1);
-    if (paramName.startsWith('...')) {
-      node.isCatchAll = true;
-      node.paramName = paramName.slice(3);
-    } else {
-      node.paramName = paramName;
-    }
-  }
 
   for (const file of files) {
     const filePath = join(dir, file);
     const stat = statSync(filePath);
 
     if (stat.isDirectory()) {
+      // Skip `api/` — resource routes are added explicitly below.
+      if (basePath === '' && file === 'api') continue;
       const childPath = basePath ? `${basePath}/${file}` : file;
       const childNode = buildRouteTree(filePath, childPath);
       node.children.push(childNode);
@@ -57,7 +41,7 @@ function buildRouteTree(dir: string, basePath = ''): Tree {
   return node;
 }
 
-function generateRoutes(node: Tree, parentSegments: string[] = []): RouteConfigEntry[] {
+function generateRoutes(node: Tree): RouteConfigEntry[] {
   const routes: RouteConfigEntry[] = [];
 
   if (node.hasPage) {
@@ -71,9 +55,7 @@ function generateRoutes(node: Tree, parentSegments: string[] = []): RouteConfigE
       const processedSegments = segments.map((segment) => {
         if (segment.startsWith('[') && segment.endsWith(']')) {
           const paramName = segment.slice(1, -1);
-          if (paramName.startsWith('...')) {
-            return '*';
-          }
+          if (paramName.startsWith('...')) return '*';
           if (paramName.startsWith('[') && paramName.endsWith(']')) {
             return `:${paramName.slice(1, -1)}?`;
           }
@@ -87,13 +69,18 @@ function generateRoutes(node: Tree, parentSegments: string[] = []): RouteConfigE
   }
 
   for (const child of node.children) {
-    routes.push(...generateRoutes(child, parentSegments));
+    routes.push(...generateRoutes(child));
   }
 
   return routes;
 }
 
-const tree = buildRouteTree(__dirname);
-const routes = generateRoutes(tree);
+const pageRoutes = generateRoutes(buildRouteTree(__dirname));
 
-export default routes;
+// Resource routes (API endpoints — no default export, only loader/action).
+const apiRoutes: RouteConfigEntry[] = [
+  route('api/news', './api/news.js'),
+  route('api/portfolio', './api/portfolio.js'),
+];
+
+export default [...pageRoutes, ...apiRoutes] satisfies RouteConfigEntry[];

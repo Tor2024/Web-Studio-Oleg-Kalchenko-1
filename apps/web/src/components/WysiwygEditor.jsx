@@ -1,9 +1,7 @@
 import { useRef, useEffect, useCallback, useState } from "react";
-import { useUpload } from "../utils/useUpload";
 
 export default function WysiwygEditor({ value, onChange }) {
   const ref = useRef();
-  const [upload] = useUpload();
   const lastValueRef = useRef();
   const [uploadedImages, setUploadedImages] = useState([]);
 
