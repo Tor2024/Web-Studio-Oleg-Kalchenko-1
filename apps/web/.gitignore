@@ -29,3 +29,7 @@ yarn-error.log*
 # misc
 *.log
 .cache
+
+# vite temp
+vite.config.ts.timestamp-*.mjs
+vite.config.js.timestamp-*.mjs
