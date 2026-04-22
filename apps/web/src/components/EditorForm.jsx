@@ -1,6 +1,5 @@
 import React, { useState, useRef } from "react";
 import WysiwygEditor from "./WysiwygEditor";
-import { useUpload } from "../utils/useUpload";
 
 const LANGS = ["en", "ru", "de"];
 
@@ -13,10 +12,8 @@ export default function EditorForm({ initialData, onSave, type }) {
   const [date, setDate] = useState(initialData.date || new Date().toISOString().substring(0, 10));
   const [lang, setLang] = useState("en");
   const [uploading, setUploading] = useState(false);
-  const [uploadResult, setUploadResult] = useState("");
   const [validationError, setValidationError] = useState("");
   const folderName = initialData.folder_name || null;
-  const [upload] = useUpload();
   const formRef = useRef();
 
   // Helpers
