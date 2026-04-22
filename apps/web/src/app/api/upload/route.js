@@ -1,4 +1,5 @@
 import { uploadAsset } from '../../../utils/storage.js';
+import { backendName } from '../../../utils/storage.js';
 import { requireAuth } from '../../../utils/auth.js';
 
 export async function action({ request }) {
@@ -23,6 +24,14 @@ export async function action({ request }) {
     return Response.json(result, { status: 201 });
   } catch (error) {
     console.error('Upload error:', error);
-    return Response.json({ error: 'Upload failed' }, { status: 500 });
+    return Response.json(
+      {
+        error: 'Upload failed',
+        backend: backendName(),
+        detail: error?.message ?? String(error),
+        status: error?.status ?? null,
+      },
+      { status: 500 },
+    );
   }
 }
